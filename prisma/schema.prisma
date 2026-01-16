@@ -4,7 +4,7 @@ generator client {
 
 datasource db {
   provider = "sqlite"
-  url      = env("DATABASE_URL")
+  url      = "file:./dev.db"
 }
 
 model Patient {
@@ -19,21 +19,29 @@ model Patient {
 }
 
 model Appointment {
-  id        Int      @id @default(autoincrement())
-  provider  String
-  dateTime  DateTime
-  patientId Int
+  id            Int      @id @default(autoincrement())
+  provider      String
+  startDateTime DateTime
+  repeat        String
+  patientId     Int
 
   patient Patient @relation(fields: [patientId], references: [id])
 }
 
+model Medication {
+  id     Int    @id @default(autoincrement())
+  name   String
+  dosage String
+}
+
 model Prescription {
-  id         Int      @id @default(autoincrement())
-  medication String
-  dosage     String
-  quantity   Int
-  refillDate DateTime
-  patientId  Int
+  id             Int      @id @default(autoincrement())
+  medicationName String
+  dosage          String
+  quantity        Int
+  refillDate      DateTime
+  refillSchedule String
+  patientId       Int
 
   patient Patient @relation(fields: [patientId], references: [id])
 }
