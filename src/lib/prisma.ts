@@ -1,17 +1,16 @@
 import { PrismaClient } from "@prisma/client";
 
-const globalForPrisma = globalThis as unknown as {
-  prisma: PrismaClient | undefined;
-};
+declare global {
+  var prisma: PrismaClient | undefined;
+}
 
-export const prisma =
-  process.env.VERCEL === "1"
-    ? null
-    : globalForPrisma.prisma ??
-      new PrismaClient({
-        log: ["error"],
-      });
+// 🚨 DO NOT USE PRISMA ON VERCEL
+const isProd = process.env.VERCEL === "1";
 
-if (process.env.VERCEL !== "1") {
-  globalForPrisma.prisma = prisma;
+export const prisma = isProd
+  ? null
+  : global.prisma ?? new PrismaClient();
+
+if (!isProd && !global.prisma) {
+  global.prisma = prisma;
 }

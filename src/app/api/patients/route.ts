@@ -2,10 +2,10 @@ import { NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 
 export async function GET() {
+  // ✅ Vercel-safe fallback
   if (!prisma) {
-    // Vercel demo fallback
     return NextResponse.json([
-      { id: 1, name: "Demo Patient", email: "demo@zealthy.com" },
+      { id: 1, name: "Demo Patient", email: "demo@zealthy.com" }
     ]);
   }
 
@@ -14,13 +14,14 @@ export async function GET() {
 }
 
 export async function POST(req: Request) {
+  const body = await req.json();
+
   if (!prisma) {
     return NextResponse.json({ success: true });
   }
 
-  const body = await req.json();
   const patient = await prisma.patient.create({
-    data: body,
+    data: body
   });
 
   return NextResponse.json(patient);
